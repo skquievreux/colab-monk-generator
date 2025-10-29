@@ -29,9 +29,11 @@
 2. **Konfiguriere Secrets in Colab:**
    - Gehe zu: `Runtime` → `Secrets`
    - Füge hinzu:
+     - `REPO_URL`: `https://github.com/skquievreux/colab-monk-generator`
      - `API_KEY`: Dein ElevenLabs API-Key
      - `VOICE_ID`: Voice-ID (z.B. für ACID MONK Style)
      - `TRENNER`: Text-Trennzeichen (z.B. `---`)
+     - `VERSION`: Optional für spezifische Version (z.B. `v1.0.1`)
 
 3. **Führe die Zellen aus:**
    - Zelle 1: Setup und Demo
@@ -41,8 +43,8 @@
 
 1. **Repository klonen:**
    ```bash
-   git clone https://github.com/your-username/colab-sound.git
-   cd colab-sound
+   git clone https://github.com/skquievreux/colab-monk-generator.git
+   cd colab-monk-generator
    ```
 
 2. **Umgebung einrichten:**

@@ -4,73 +4,93 @@
 # Diese Zelle lädt Code-Module aus einem Git-Repository für Versionskontrolle
 # und führt Setup, Demo und Generator-Funktion aus.
 
-# Git-Loader initialisieren (ändere dies zu deinem Repository)
+# =====================================================
+# Colab-Sound Setup & Demo (Git-Version)
+# =====================================================
+# Diese Zelle klont das Repository und lädt die Module
+
 import sys
 import os
 
-# Pfad zu den lokalen Modulen hinzufügen
-sys.path.append(os.path.join(os.getcwd(), 'src'))
-
+# Konfiguration aus Colab Secrets laden
 try:
-    from git_loader import init_git_loader, load_from_git
-    print("✅ Git-Loader aus lokalem Modul geladen")
-except ImportError:
-    print("⚠️  Git-Loader nicht verfügbar - verwende direkte Imports")
-
-# TODO: Ersetze 'user/colab-sound' mit deinem tatsächlichen GitHub Repository
-REPO_URL = 'user/colab-sound'  # Ändere dies zu deinem Repository!
-
-try:
-    # Git-Loader initialisieren
-    init_git_loader(REPO_URL, default_branch='main')
-
-    # Module aus Git laden
-    print("🔄 Lade Module aus Git-Repository...")
-
-    # Setup-Modul laden
-    if load_from_git('setup'):
-        from setup import init_colab
-        setup_status = init_colab()
-    else:
-        print("❌ Setup-Modul konnte nicht geladen werden")
-        setup_status = None
-
-    # Demo-Modul laden und ausführen
-    if load_from_git('demo'):
-        from demo import show_hook_demo
-        print("🎬 Zeige Demo...")
-        show_hook_demo()
-    else:
-        print("❌ Demo-Modul konnte nicht geladen werden")
-
-    # Generator-Modul laden
-    if load_from_git('generator'):
-        from generator import generate_hooks
-        print("✅ Generator-Modul bereit")
-    else:
-        print("❌ Generator-Modul konnte nicht geladen werden")
-
-except Exception as e:
-    print(f"❌ Fehler beim Laden aus Git: {e}")
-    print("🔄 Fallback: Verwende lokale Module...")
-
-    # Fallback auf lokale Module falls Git-Loading fehlschlägt
+    from google.colab import userdata
+    REPO_URL = userdata.get('REPO_URL') or 'https://github.com/your-username/colab-sound'
+    # VERSION automatisch aus Git-Tags laden (neueste Version)
     try:
-        from setup import init_colab
-        from demo import show_hook_demo
-        from generator import generate_hooks
+        VERSION = userdata.get('VERSION')  # Spezifische Version falls gesetzt
+    except:
+        VERSION = 'main'  # Fallback auf main falls VERSION nicht existiert
+except ImportError:
+    # Fallback für lokale Entwicklung
+    REPO_URL = "https://github.com/your-username/colab-sound"
+    VERSION = "main"  # Lokale Entwicklung verwendet main
 
-        setup_status = init_colab()
-        show_hook_demo()
+REPO_DIR = "/content/colab-sound"  # Colab-Pfad
 
-        print("✅ Lokale Module erfolgreich geladen")
+print("🔗 Colab-Sound Git-Loader")
+print(f"📦 Repository: {REPO_URL}")
+print(f"🏷️  Version: {VERSION} (automatisch aus Secrets oder 'main' als Fallback)")
+print(f"📁 Ziel-Verzeichnis: {REPO_DIR}")
+print("💡 Tipp: Setze VERSION in Colab Secrets für spezifische Version (z.B. 'v1.0.0')")
 
-    except ImportError as e:
-        print(f"❌ Auch lokale Module nicht verfügbar: {e}")
-        print("Bitte stelle sicher, dass alle Module vorhanden sind.")
-        print("Du kannst auch die Module direkt aus dem src/ Verzeichnis importieren:")
-        print("from src.setup import init_colab")
-        print("from src.demo import show_hook_demo")
-        print("from src.generator import generate_hooks")
+# Repository klonen/updaten
+if not os.path.exists(REPO_DIR):
+    print("📥 Klone Repository...")
+    os.system(f"git clone {REPO_URL} {REPO_DIR}")
+    os.chdir(REPO_DIR)
+    os.system(f"git checkout {VERSION}")
+else:
+    print("🔄 Update Repository...")
+    os.chdir(REPO_DIR)
+    os.system("git fetch")
+    os.system(f"git checkout {VERSION}")
+    os.system("git pull")
+
+print(f"📂 Wechsle zu: {REPO_DIR}")
+os.chdir(REPO_DIR)
+
+# Pfad für Module hinzufügen
+sys.path.insert(0, REPO_DIR)
+
+# Abhängigkeiten installieren
+print("📦 Installiere Abhängigkeiten...")
+os.system("pip install -r requirements.txt -q")
+
+# Module laden
+try:
+    print("🔄 Lade Module...")
+
+    from src.setup import init_colab
+    from src.demo import show_hook_demo
+    from src.generator import generate_hooks
+
+    print("✅ Alle Module erfolgreich geladen")
+
+    # Setup ausführen
+    print("🚀 Führe Setup aus...")
+    setup_status = init_colab()
+
+    # Demo anzeigen
+    print("🎬 Zeige Demo...")
+    show_hook_demo()
+
+    print("✅ Setup und Demo abgeschlossen!")
+
+except ImportError as e:
+    print(f"❌ Fehler beim Laden der Module: {e}")
+    print("🔍 Debug-Informationen:")
+    print(f"   Aktuelles Verzeichnis: {os.getcwd()}")
+    print(f"   src/ existiert: {os.path.exists('src')}")
+    if os.path.exists('src'):
+        print(f"   Dateien in src/: {os.listdir('src')}")
+
+    print("\n🔧 Fehlerbehebung:")
+    print("1. Überprüfe die REPO_URL - ist das Repository öffentlich?")
+    print("2. Stelle sicher, dass die Version existiert")
+    print("3. Bei Netzwerkfehlern: Warte einen Moment und versuche erneut")
+    print("4. Alternativ: Klone manuell mit:")
+    print(f"   !git clone {REPO_URL} {REPO_DIR}")
+    print(f"   !cd {REPO_DIR} && git checkout {VERSION}")
 
 print("🎯 Zelle 1 abgeschlossen. Jetzt Zelle 2 ausführen!")

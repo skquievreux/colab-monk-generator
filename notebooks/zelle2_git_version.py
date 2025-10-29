@@ -4,48 +4,61 @@
 # Diese Zelle lädt die neueste Version der Web-Interface aus Git
 # und ermöglicht das Hochladen von Text-Dateien zur Hook-Generierung.
 
-# Stelle sicher, dass die Module aus Zelle 1 geladen sind
+# =====================================================
+# Colab-Sound Web-Interface (Git-Version)
+# =====================================================
+# Diese Zelle startet das Web-Interface für die Hook-Generierung
+
 import sys
 import os
 
-# Pfad zu den lokalen Modulen hinzufügen
-sys.path.append(os.path.join(os.getcwd(), 'src'))
+# Verwende dasselbe Repository-Verzeichnis wie Zelle 1
+REPO_DIR = "/content/colab-sound"
 
-try:
-    # Prüfe ob Setup erfolgreich war
-    if 'setup_status' not in globals() or not setup_status:
-        print("⚠️  Setup wurde nicht ausgeführt. Führe Zelle 1 zuerst aus!")
-        raise ImportError("Setup fehlt")
+# Stelle sicher, dass wir im richtigen Verzeichnis sind
+if os.path.exists(REPO_DIR):
+    os.chdir(REPO_DIR)
+    print(f"📂 Wechsle zu Repository: {REPO_DIR}")
+else:
+    print(f"⚠️  Repository-Verzeichnis nicht gefunden: {REPO_DIR}")
+    print("Führe Zelle 1 zuerst aus!")
 
-    # Prüfe ob Secrets verfügbar sind
-    if not setup_status.get('secrets_loaded', False):
-        print("⚠️  API-Keys nicht verfügbar. Konfiguriere Colab Secrets!")
-        raise ImportError("Secrets fehlen")
+# Pfad für Module hinzufügen
+sys.path.insert(0, REPO_DIR)
 
-    secrets = setup_status['secrets']
+# Prüfe ob Setup aus Zelle 1 erfolgreich war
+if 'setup_status' not in globals() or not setup_status:
+    print("⚠️  Setup wurde nicht ausgeführt. Führe Zelle 1 zuerst aus!")
+    print("🔄 Versuche Module direkt zu laden...")
 
-    # Importiere Generator-Funktion
-    if 'generate_hooks' not in globals():
-        print("⚠️  Generator-Funktion nicht verfügbar")
-        raise ImportError("Generator fehlt")
-
-    print("✅ Alle Voraussetzungen erfüllt. Starte Web-Interface...")
-
-except ImportError as e:
-    print(f"❌ Fehler: {e}")
-    print("🔄 Fallback: Lade lokale Version...")
-
-    # Fallback auf lokale Version falls Git-Loading fehlschlägt
     try:
-        from zelle2_final import *
-        print("✅ Lokale Zelle 2 geladen")
-    except ImportError:
-        print("❌ Auch lokale Version nicht verfügbar")
-        print("Bitte führe Zelle 1 zuerst aus!")
-        print("Du kannst auch die Module direkt aus dem src/ Verzeichnis importieren:")
-        print("from src.setup import init_colab")
-        print("from src.demo import show_hook_demo")
-        print("from src.generator import generate_hooks")
+        from src.setup import init_colab
+        from src.demo import show_hook_demo
+        from src.generator import generate_hooks
+
+        print("🔄 Führe Setup aus...")
+        setup_status = init_colab()
+
+    except ImportError as e:
+        print(f"❌ Fehler beim Laden der Module: {e}")
+        print("Bitte stelle sicher, dass:")
+        print("1. Du Zelle 1 zuerst ausgeführt hast")
+        print("2. Das Repository wurde geklont")
+        print("3. Alle Dateien in src/ vorhanden sind")
+        raise
+
+# Prüfe Setup-Status
+if not setup_status.get('secrets_loaded', False):
+    print("⚠️  API-Keys nicht verfügbar. Konfiguriere Colab Secrets!")
+    print("Gehe zu: Runtime → Secrets")
+    print("Füge hinzu:")
+    print("- API_KEY: Dein ElevenLabs API-Key")
+    print("- VOICE_ID: Voice-ID für Sprachsynthese")
+    print("- TRENNER: Text-Trennzeichen (z.B. ---)")
+    raise ImportError("API-Keys fehlen")
+
+secrets = setup_status['secrets']
+print("✅ Alle Voraussetzungen erfüllt. Starte Web-Interface...")
 
 # Web-Interface mit Gradio
 import gradio as gr

@@ -58,7 +58,16 @@ if not setup_status.get('secrets_loaded', False):
     raise ImportError("API-Keys fehlen")
 
 secrets = setup_status['secrets']
-print("✅ Alle Voraussetzungen erfüllt. Starte Web-Interface...")
+
+# Aktuelle Version ermitteln
+current_version = "main"  # Default
+try:
+    from google.colab import userdata
+    current_version = userdata.get('VERSION') or 'main'
+except:
+    current_version = 'main'
+
+print(f"✅ Alle Voraussetzungen erfüllt. Starte Web-Interface (Version: {current_version})...")
 
 # Web-Interface mit Gradio
 import gradio as gr
@@ -100,11 +109,11 @@ def process_file(file_obj):
         return None, f"❌ Fehler bei der Verarbeitung: {e}"
 
 # Erstelle Gradio Interface
-with gr.Blocks(title="🎵 Hook-Generator v2.0", theme=gr.themes.Soft()) as interface:
+with gr.Blocks(title=f"🎵 Hook-Generator {current_version}", theme=gr.themes.Soft()) as interface:
 
-    gr.Markdown("""
+    gr.Markdown(f"""
     # 🎵 ACID MONK - Hook Generator
-    **Version 2.0 mit Git-Versionskontrolle**
+    **Version {current_version} mit Git-Versionskontrolle**
 
     Lade eine Text-Datei hoch und generiere professionelle Audio-Hooks mit ElevenLabs KI.
     """)

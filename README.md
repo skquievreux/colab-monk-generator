@@ -39,6 +39,33 @@
 
 ### Option 2: Lokale Installation
 
+1. **Repository klonen:**
+   ```bash
+   git clone https://github.com/your-username/colab-sound.git
+   cd colab-sound
+   ```
+
+2. **Umgebung einrichten:**
+   ```bash
+   # .env.example nach .env kopieren und anpassen
+   cp .env.example .env
+
+   # .env mit deinen API-Keys füllen
+   nano .env  # oder deinen bevorzugten Editor
+   ```
+
+3. **Abhängigkeiten installieren:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Lokalen Server starten:**
+   ```bash
+   python -c "from src.demo import show_hook_demo; show_hook_demo()"
+   ```
+
+### Option 2: Lokale Installation
+
 ```bash
 # Repository klonen
 git clone https://github.com/your-username/colab-sound.git

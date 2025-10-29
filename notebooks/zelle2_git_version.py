@@ -5,6 +5,12 @@
 # und ermöglicht das Hochladen von Text-Dateien zur Hook-Generierung.
 
 # Stelle sicher, dass die Module aus Zelle 1 geladen sind
+import sys
+import os
+
+# Pfad zu den lokalen Modulen hinzufügen
+sys.path.append(os.path.join(os.getcwd(), 'src'))
+
 try:
     # Prüfe ob Setup erfolgreich war
     if 'setup_status' not in globals() or not setup_status:
@@ -36,6 +42,10 @@ except ImportError as e:
     except ImportError:
         print("❌ Auch lokale Version nicht verfügbar")
         print("Bitte führe Zelle 1 zuerst aus!")
+        print("Du kannst auch die Module direkt aus dem src/ Verzeichnis importieren:")
+        print("from src.setup import init_colab")
+        print("from src.demo import show_hook_demo")
+        print("from src.generator import generate_hooks")
 
 # Web-Interface mit Gradio
 import gradio as gr

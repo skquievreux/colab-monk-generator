@@ -5,7 +5,17 @@
 # und führt Setup, Demo und Generator-Funktion aus.
 
 # Git-Loader initialisieren (ändere dies zu deinem Repository)
-from git_loader import init_git_loader, load_from_git
+import sys
+import os
+
+# Pfad zu den lokalen Modulen hinzufügen
+sys.path.append(os.path.join(os.getcwd(), 'src'))
+
+try:
+    from git_loader import init_git_loader, load_from_git
+    print("✅ Git-Loader aus lokalem Modul geladen")
+except ImportError:
+    print("⚠️  Git-Loader nicht verfügbar - verwende direkte Imports")
 
 # TODO: Ersetze 'user/colab-sound' mit deinem tatsächlichen GitHub Repository
 REPO_URL = 'user/colab-sound'  # Ändere dies zu deinem Repository!
@@ -58,5 +68,9 @@ except Exception as e:
     except ImportError as e:
         print(f"❌ Auch lokale Module nicht verfügbar: {e}")
         print("Bitte stelle sicher, dass alle Module vorhanden sind.")
+        print("Du kannst auch die Module direkt aus dem src/ Verzeichnis importieren:")
+        print("from src.setup import init_colab")
+        print("from src.demo import show_hook_demo")
+        print("from src.generator import generate_hooks")
 
 print("🎯 Zelle 1 abgeschlossen. Jetzt Zelle 2 ausführen!")

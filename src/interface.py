@@ -58,28 +58,27 @@ class UnifiedInterface:
         except Exception as e:
             return None, f"❌ Fehler bei der Verarbeitung: {e}"
 
-    def run_demo(self) -> str:
+    def run_demo(self) -> Tuple[gr.Audio, str]:
         """
-        Führt die Demo aus und gibt HTML für Anzeige zurück
+        Führt die Demo aus und gibt Audio-Player und Status zurück
 
         Returns:
-            str: HTML-String für Gradio-Anzeige
+            Tuple[gr.Audio, str]: (Audio-Player, Status-Nachricht)
         """
         try:
             # Demo herunterladen falls nötig
             if not demo_player.download_demo():
-                return "<div style='color: red; padding: 20px;'>❌ Demo konnte nicht geladen werden</div>"
+                return None, "❌ Demo konnte nicht geladen werden"
 
             # Demo-Karte anzeigen
             demo_player.show_demo_card()
 
-            # Demo abspielen
-            demo_player.play_demo()
-
-            return "<div style='color: green; padding: 20px;'>✅ Demo erfolgreich gestartet! Überprüfe die Audio-Ausgabe oben.</div>"
+            # Audio-Player zurückgeben
+            audio_player = gr.Audio(demo_player.demo_file, autoplay=False)
+            return audio_player, "✅ Demo erfolgreich geladen! Klicke auf Play um abzuspielen."
 
         except Exception as e:
-            return f"<div style='color: red; padding: 20px;'>❌ Demo-Fehler: {e}</div>"
+            return None, f"❌ Demo-Fehler: {e}"
 
     def create_interface(self) -> gr.Blocks:
         """
@@ -113,19 +112,27 @@ class UnifiedInterface:
                     """)
 
                     demo_button = gr.Button(
-                        "🎵 Demo abspielen",
+                        "🎵 Demo laden",
                         variant="primary",
                         size="lg"
                     )
 
-                    demo_output = gr.HTML(
-                        value="<div style='text-align: center; padding: 20px; color: #666;'>Klicke auf 'Demo abspielen', um zu starten</div>"
+                    demo_audio = gr.Audio(
+                        label="Demo-Hook",
+                        interactive=False,
+                        autoplay=False
+                    )
+
+                    demo_status = gr.Textbox(
+                        label="Status",
+                        interactive=False,
+                        value="Klicke auf 'Demo laden', um zu starten"
                     )
 
                     demo_button.click(
                         fn=self.run_demo,
                         inputs=[],
-                        outputs=[demo_output]
+                        outputs=[demo_audio, demo_status]
                     )
 
                 # Tab 2: Hook Generator

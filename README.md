@@ -1,6 +1,6 @@
 # 🎵 Colab-Sound: AI-Powered Hook Generator
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/your-username/colab-sound)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/skquievreux/colab-monk-generator)
 [![Python](https://img.shields.io/badge/python-3.8+-green.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/)
@@ -66,12 +66,12 @@
    python -c "from src.demo import show_hook_demo; show_hook_demo()"
    ```
 
-### Option 2: Lokale Installation
+### Option 2: Lokale Installation (Alternative)
 
 ```bash
 # Repository klonen
-git clone https://github.com/your-username/colab-sound.git
-cd colab-sound
+git clone https://github.com/skquievreux/colab-monk-generator.git
+cd colab-monk-generator
 
 # Abhängigkeiten installieren
 pip install -r requirements.txt
@@ -224,7 +224,7 @@ Dieses Projekt ist unter der MIT-Lizenz lizenziert - siehe die [LICENSE](LICENSE
 
 Bei Fragen oder Problemen:
 
-1. **GitHub Issues**: [Öffne ein Issue](https://github.com/your-username/colab-sound/issues)
+1. **GitHub Issues**: [Öffne ein Issue](https://github.com/skquievreux/colab-monk-generator/issues)
 2. **ElevenLabs Docs**: [API-Dokumentation](https://docs.elevenlabs.io/)
 3. **Gradio Docs**: [Interface-Dokumentation](https://gradio.app/docs/)
 

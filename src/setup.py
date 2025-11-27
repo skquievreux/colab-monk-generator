@@ -6,6 +6,9 @@ Behandelt Installation, Konfiguration und Initialisierung
 import subprocess
 import sys
 from typing import List, Dict, Any
+from src.logger import get_logger
+
+logger = get_logger("setup")
 
 class ColabSetup:
     """Verwaltet Setup und Konfiguration für Google Colab"""
@@ -36,11 +39,11 @@ class ColabSetup:
             for package in packages:
                 self.installed_packages.add(package.split('>=')[0].split('==')[0])
 
-            print(f"✅ Packages installiert: {', '.join(packages)}")
+            logger.info(f"Packages installiert: {', '.join(packages)}")
             return True
 
         except subprocess.CalledProcessError as e:
-            print(f"❌ Fehler bei Package-Installation: {e}")
+            logger.error(f"Fehler bei Package-Installation: {e}")
             return False
 
     def setup_gradio(self) -> bool:
@@ -61,11 +64,11 @@ class ColabSetup:
             import nest_asyncio
             nest_asyncio.apply()
 
-            print("✅ Gradio-Setup abgeschlossen")
+            logger.info("Gradio-Setup abgeschlossen")
             return True
 
         except Exception as e:
-            print(f"❌ Fehler beim Gradio-Setup: {e}")
+            logger.error(f"Fehler beim Gradio-Setup: {e}")
             return False
 
     def load_secrets(self) -> Dict[str, str]:
@@ -87,18 +90,18 @@ class ColabSetup:
             # Überprüfe ob alle Secrets vorhanden sind
             missing = [k for k, v in secrets.items() if v is None]
             if missing:
-                print(f"⚠️  Fehlende Secrets: {', '.join(missing)}")
-                print("Bitte stelle sicher, dass alle Secrets in Colab konfiguriert sind.")
+                logger.warning(f"Fehlende Secrets: {', '.join(missing)}")
+                logger.warning("Bitte stelle sicher, dass alle Secrets in Colab konfiguriert sind.")
                 return {}
 
-            print("✅ Secrets erfolgreich geladen")
+            logger.info("Secrets erfolgreich geladen")
             return secrets
 
         except ImportError:
-            print("❌ Google Colab nicht verfügbar - Secrets können nicht geladen werden")
+            logger.error("Google Colab nicht verfügbar - Secrets können nicht geladen werden")
             return {}
         except Exception as e:
-            print(f"❌ Fehler beim Laden der Secrets: {e}")
+            logger.error(f"Fehler beim Laden der Secrets: {e}")
             return {}
 
     def initialize(self) -> Dict[str, Any]:
@@ -108,7 +111,7 @@ class ColabSetup:
         Returns:
             Dict mit Setup-Status und Konfiguration
         """
-        print("🚀 Starte Colab-Sound Setup...")
+        logger.info("🚀 Starte Colab-Sound Setup...")
 
         # Gradio Setup
         gradio_ok = self.setup_gradio()
@@ -125,9 +128,9 @@ class ColabSetup:
         }
 
         if gradio_ok and secrets:
-            print("✅ Setup erfolgreich abgeschlossen!")
+            logger.info("Setup erfolgreich abgeschlossen!")
         else:
-            print("⚠️  Setup unvollständig - einige Funktionen könnten nicht verfügbar sein")
+            logger.warning("Setup unvollständig - einige Funktionen könnten nicht verfügbar sein")
 
         return status
 
@@ -140,4 +143,4 @@ def init_colab():
 
 # Automatische Initialisierung beim Import
 if __name__ != "__main__":
-    print("🔧 Colab-Sound Setup-Modul geladen")
+    logger.debug("Colab-Sound Setup-Modul geladen")

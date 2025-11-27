@@ -7,19 +7,24 @@ import requests
 import os
 from typing import Optional
 from IPython.display import Audio, display, HTML
+from src.logger import get_logger
+from src.config import get_config
+
+logger = get_logger("demo")
+config = get_config()
 
 class DemoPlayer:
     """Verwaltet Demo-Funktionalität für Hook-Generator"""
 
-    def __init__(self, demo_url: str = "https://pub-aa6154186add4631a26d1261deb9606f.r2.dev/acid-monk-obsession-arrived.mp3"):
+    def __init__(self, demo_url: str = None):
         """
         Initialisiert den Demo-Player
 
         Args:
-            demo_url: URL der Demo-MP3-Datei
+            demo_url: URL der Demo-MP3-Datei (optional, aus Config wenn nicht angegeben)
         """
-        self.demo_url = demo_url
-        self.demo_file = "demo_hook.mp3"
+        self.demo_url = demo_url or config.demo.demo_url
+        self.demo_file = config.demo.demo_file_name
 
     def download_demo(self) -> bool:
         """
@@ -29,20 +34,20 @@ class DemoPlayer:
             bool: True bei Erfolg
         """
         try:
-            response = requests.get(self.demo_url, timeout=30)
+            response = requests.get(self.demo_url, timeout=config.network.download_timeout)
             response.raise_for_status()
 
             with open(self.demo_file, "wb") as f:
                 f.write(response.content)
 
-            print("✅ Demo-MP3 erfolgreich heruntergeladen")
+            logger.info("Demo-MP3 erfolgreich heruntergeladen")
             return True
 
         except requests.exceptions.RequestException as e:
-            print(f"❌ Netzwerk-Fehler beim Download: {e}")
+            logger.error(f"Netzwerk-Fehler beim Download: {e}")
             return False
         except Exception as e:
-            print(f"❌ Fehler beim Download: {e}")
+            logger.error(f"Fehler beim Download: {e}")
             return False
 
     def show_demo_card(self) -> None:
@@ -88,7 +93,7 @@ class DemoPlayer:
             autoplay: Automatische Wiedergabe aktivieren
         """
         if not os.path.exists(self.demo_file):
-            print("❌ Demo-Datei nicht gefunden. Lade sie zuerst herunter.")
+            logger.error("Demo-Datei nicht gefunden. Lade sie zuerst herunter.")
             return
 
         try:
@@ -120,15 +125,15 @@ class DemoPlayer:
             display(HTML(download_html))
 
         except Exception as e:
-            print(f"❌ Fehler bei der Audio-Wiedergabe: {e}")
+            logger.error(f"Fehler bei der Audio-Wiedergabe: {e}")
 
     def run_demo(self) -> None:
         """Führt die komplette Demo durch"""
-        print("🎬 Starte Hook-Generator Demo...")
+        logger.info("🎬 Starte Hook-Generator Demo...")
 
         # Demo herunterladen
         if not self.download_demo():
-            print("❌ Demo konnte nicht geladen werden")
+            logger.error("Demo konnte nicht geladen werden")
             return
 
         # Demo-Karte anzeigen
@@ -137,7 +142,7 @@ class DemoPlayer:
         # Demo abspielen
         self.play_demo()
 
-        print("✅ Demo abgeschlossen!")
+        logger.info("Demo abgeschlossen!")
 
 # Globale Instanz und Funktion
 demo_player = DemoPlayer()
@@ -152,4 +157,4 @@ def download_demo_only():
 
 # Automatische Info beim Import
 if __name__ != "__main__":
-    print("🎧 Demo-Modul geladen")
+    logger.debug("Demo-Modul geladen")

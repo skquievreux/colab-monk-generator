@@ -8,6 +8,9 @@ from pathlib import Path
 from typing import Optional, Tuple
 from src.generator import generate_hooks
 from src.demo import demo_player
+from src.logger import get_logger
+
+logger = get_logger("interface")
 
 class UnifiedInterface:
     """Vereinheitlichtes Interface für Demo und Hook-Generierung"""
@@ -223,4 +226,4 @@ def create_unified_interface(secrets: dict, current_version: str = "main") -> gr
 
 # Automatische Info beim Import
 if __name__ != "__main__":
-    print("🎛️ Interface-Modul geladen")
+    logger.debug("Interface-Modul geladen")

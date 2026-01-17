@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: colab-monk-generator
+  description: |
+    Ein innovatives Collaboration-Tool, das mit Node.js und Python die automatisierte Generierung von Monk-Konfigurationen und Skripten ermöglicht und dabei nahtlose Zusammenarbeit zwischen verschiedenen Entwicklungsumgebungen gewährleistet.
+  annotations:
+    github.com/project-slug: skquievreux/colab-monk-generator
+spec:
+  type: service
+  lifecycle: experimental
+  owner: guests

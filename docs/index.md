@@ -1,9 +1,3 @@
-# colab-monk-generator
+# Documentation
 
-Ein innovatives Collaboration-Tool, das mit Node.js und Python die automatisierte Generierung von Monk-Konfigurationen und Skripten ermöglicht und dabei nahtlose Zusammenarbeit zwischen verschiedenen Entwicklungsumgebungen gewährleistet.
-
-## Overview
-This documentation was automatically scaffolded by Backstage.
-
-## Getting Started
-Add your documentation here.
+Welcome to the documentation for Colab-Sound.
